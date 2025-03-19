@@ -27,7 +27,6 @@
 
 html {
   scroll-behavior: smooth;
-  user-select: none;
 }
 
 html,
@@ -320,5 +319,25 @@ a:hover::after {
 
 .neon-button:hover::before {
   left: 100%;
+}
+
+/* Ajouter ces styles pour les transitions fluides du curseur */
+@keyframes cursorTransition {
+  0% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Classe pour les éléments qui nécessitent un curseur foncé */
+[data-cursor-color="dark"] {
+  cursor: none !important;
+}
+
+/* Classe pour les éléments qui nécessitent un curseur clair */
+[data-cursor-color="light"] {
+  cursor: none !important;
 }
 

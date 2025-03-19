@@ -28,16 +28,16 @@ interface SamplePack {
 // Données de démonstration pour les sample packs
 const samplePacks: SamplePack[] = [
   {
-    id: "BRUTAL NUMBER ONE",
-    title: "BRUTAL NUMBER EXPENSION (VOL.1)",
+    id: "industrial-kicks",
+    title: "INDUSTRIAL KICKS VOL.1",
     description:
-      "One of the most brutal sample packs, 100% free for you. Get ready to destroy your speakers with these heavy kicks.",
+      "Une collection de kicks industriels puissants et distordus, parfaits pour hardstyle, hardcore et techno industrielle.",
     image: "/placeholder.svg?height=500&width=500",
     downloadUrl: "#",
     fileSize: "250 MB",
     format: "WAV 24bit/44.1kHz",
     sampleCount: 120,
-    tags: ["Industrial", "Hardstyle", "Screechs"],
+    tags: ["Industrial", "Kicks", "Hardstyle", "Hardcore"],
     featured: true,
   },
   {

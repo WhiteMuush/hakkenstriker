@@ -2,8 +2,8 @@ import { NextResponse } from "next/server"
 
 // Fonction pour obtenir un token d'accès Spotify
 async function getAccessToken() {
-  const clientId = "f17f245cbbf34712a0f48fef0180de21"
-  const clientSecret = "862507b96c184a06bfd8d5eafb6ef5e4"
+  const clientId = process.env.SPOTIFY_CLIENT_ID || ""
+  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET || ""
 
   const response = await fetch("https://accounts.spotify.com/api/token", {
     method: "POST",

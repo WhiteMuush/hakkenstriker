@@ -315,7 +315,7 @@ export default function MusicProfile() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
-              className="text-red-500 font-medium tracking-wider flex items-center gap-0 py-2 px-4 hover:bg-red-500/10 rounded-sm"
+              className="text-red-500 font-medium tracking-wider flex items-center justify-center gap-0 py-2 px-4 hover:bg-red-500/10 rounded-sm"
             >
               • UNDERGROUND
             </motion.button>
@@ -337,18 +337,19 @@ export default function MusicProfile() {
                   href="#connect"
                   className="px-4 py-2 hover:bg-red-500/10 hover:text-red-500 transition-colors text-sm"
                 >
+                  CONNECT
+                </Link>
+                <Link
+                  href="/samples"
+                  className="px-4 py-2 hover:bg-red-500/10 hover:text-red-500 transition-colors text-sm"
+                >
                   SAMPLES
                 </Link>
                 <Link
-                  href="/coming-soon"
+                  href="/shop"
                   className="px-4 py-2 hover:bg-red-500/10 hover:text-red-500 transition-colors text-sm"
                 >
                   SHOP
-                </Link>
-                <Link
-                  href="/coming-soon"
-                  className="px-4 py-2 hover:bg-red-500/10 hover:text-red-500 transition-colors text-sm"
-                >
                 </Link>
               </div>
             </div>
@@ -416,14 +417,14 @@ export default function MusicProfile() {
               CONNECT
             </Link>
             <Link
-              href="/samples"
+              href="/coming-soon"
               className="text-2xl font-bold tracking-wider hover:text-red-500 transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               SAMPLES
             </Link>
             <Link
-              href="/shop"
+              href="/coming-soon"
               className="text-2xl font-bold tracking-wider hover:text-red-500 transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >

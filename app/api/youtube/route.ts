@@ -5,7 +5,7 @@ import { NextResponse } from "next/server"
 // const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY
 
 // Par votre clé d'API réelle (temporairement pour les tests):
-const YOUTUBE_API_KEY = "AIzaSyA9lJlkaJ7YmxQfSU5fo4eDGjN_UVZ6UhY"
+const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY || ""
 
 // OU si vous préférez continuer à utiliser une variable d'environnement (recommandé),
 // gardez la ligne originale mais assurez-vous de configurer la variable d'environnement

@@ -2,9 +2,9 @@
 
 import type React from "react"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
-import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion"
+import { motion, useScroll, useSpring } from "framer-motion"
 import { ArrowLeft, ShoppingCart, ExternalLink, Package, Truck, CreditCard, Star } from "lucide-react"
 
 // Import des composants
@@ -144,34 +144,9 @@ function Background3D() {
   )
 }
 
-// Composant pour afficher un produit avec effet 3D
+// Remplacer le composant ProductCard3D par cette nouvelle version qui affiche un mockup 3D au survol
 function ProductCard3D({ product, index }: { product: Product; index: number }) {
   const [isHovered, setIsHovered] = useState(false)
-  const cardRef = useRef<HTMLDivElement>(null)
-
-  // Valeurs pour l'effet de rotation 3D
-  const x = useMotionValue(0)
-  const y = useMotionValue(0)
-  const rotateX = useTransform(y, [-100, 100], [10, -10])
-  const rotateY = useTransform(x, [-100, 100], [-10, 10])
-
-  // Fonction pour gérer le mouvement de la souris sur la carte
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return
-
-    const rect = cardRef.current.getBoundingClientRect()
-    const centerX = rect.left + rect.width / 2
-    const centerY = rect.top + rect.height / 2
-
-    x.set(e.clientX - centerX)
-    y.set(e.clientY - centerY)
-  }
-
-  const handleMouseLeave = () => {
-    setIsHovered(false)
-    x.set(0)
-    y.set(0)
-  }
 
   // Fonction pour formater le prix
   const formatPrice = (price: number) => {
@@ -192,9 +167,27 @@ function ProductCard3D({ product, index }: { product: Product; index: number }) 
     }
   }
 
+  // Déterminer quel type de mockup 3D afficher en fonction de la catégorie
+  const getMockupType = () => {
+    const category = product.category.toLowerCase()
+    if (category.includes("vêtement") && product.name.toLowerCase().includes("t-shirt")) {
+      return "tshirt"
+    } else if (category.includes("vêtement") && product.name.toLowerCase().includes("hoodie")) {
+      return "hoodie"
+    } else if (category.includes("accessoire") && product.name.toLowerCase().includes("casquette")) {
+      return "cap"
+    } else if (category.includes("musique") || product.name.toLowerCase().includes("vinyle")) {
+      return "vinyl"
+    } else if (category.includes("accessoire") && product.name.toLowerCase().includes("tote")) {
+      return "tote"
+    } else if (category.includes("vêtement") && product.name.toLowerCase().includes("veste")) {
+      return "jacket"
+    }
+    return "tshirt" // Par défaut
+  }
+
   return (
     <motion.div
-      ref={cardRef}
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
@@ -203,93 +196,225 @@ function ProductCard3D({ product, index }: { product: Product; index: number }) 
         type: "spring",
         stiffness: 100,
       }}
-      className={`relative overflow-hidden ${product.featured ? "md:col-span-2" : ""}`}
-      onMouseMove={handleMouseMove}
+      className={`relative ${product.featured ? "md:col-span-2" : ""}`}
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={handleMouseLeave}
-      style={{
-        transformStyle: "preserve-3d",
-        perspective: "1000px",
-      }}
+      onMouseLeave={() => setIsHovered(false)}
     >
-      <motion.div
+      <div
         className="bg-white/80 backdrop-blur-lg border border-white/20 rounded-lg shadow-xl overflow-hidden"
-        style={{
-          rotateX: rotateX,
-          rotateY: rotateY,
-          transformStyle: "preserve-3d",
-          boxShadow: isHovered
-            ? "0 20px 40px rgba(220, 38, 38, 0.2), 0 0 20px rgba(220, 38, 38, 0.1), inset 0 0 10px rgba(255, 2, 2, 0.81)"
-            : "0 10px 30px rgba(0, 0, 0, 0.1)",
-          transition: "box-shadow 0.3s ease",
-        }}
+        data-cursor-color="dark"
       >
-        {/* Badge édition limitée avec effet 3D */}
+        {/* Badge édition limitée */}
         {product.isLimited && (
           <motion.div
             className="absolute top-4 right-4 z-10 bg-red-600 text-white px-3 py-1 text-xs font-bold"
-            initial={{ rotateY: 0 }}
-            animate={{ rotateY: isHovered ? [0, 10, 0] : 0 }}
-            transition={{ duration: 2, repeat: isHovered ? Number.POSITIVE_INFINITY : 0 }}
-            style={{
-              transformStyle: "preserve-3d",
-              boxShadow: "0 5px 15px rgba(220, 38, 38, 0.3)",
-              transform: "translateZ(5px)",
+            animate={{
+              boxShadow: isHovered
+                ? [
+                    "0 0 10px rgba(220, 38, 38, 0.3)",
+                    "0 0 20px rgba(220, 38, 38, 0.5)",
+                    "0 0 10px rgba(220, 38, 38, 0.3)",
+                  ]
+                : "0 0 10px rgba(220, 38, 38, 0.3)",
             }}
+            transition={{ duration: 2, repeat: isHovered ? Number.POSITIVE_INFINITY : 0 }}
           >
             ÉDITION LIMITÉE
           </motion.div>
         )}
 
         <div className={`grid grid-cols-1 ${product.featured ? "md:grid-cols-2 gap-8" : "gap-4"} p-6`}>
+          {/* Container pour l'image et le mockup 3D */}
           <div className="relative aspect-square overflow-hidden rounded-lg group">
-            {/* Image avec effet de profondeur */}
+            {/* Image du produit qui disparaît au survol */}
             <motion.img
               src={product.image || "/placeholder.svg"}
               alt={product.name}
               className="w-full h-full object-cover"
-              style={{
-                transformStyle: "preserve-3d",
-                transform: isHovered ? "translateZ(30px)" : "translateZ(0px)",
-                transition: "transform 0.3s ease",
+              animate={{
+                opacity: isHovered ? 0 : 1,
+                scale: isHovered ? 0.8 : 1,
               }}
-              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.5 }}
             />
 
-            {/* Overlay avec effet 3D */}
+            {/* Mockup 3D qui apparaît au survol */}
             <motion.div
-              className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: isHovered ? 1 : 0 }}
-              transition={{ duration: 0.3 }}
-              style={{
-                transformStyle: "preserve-3d",
-                transform: "translateZ(40px)",
+              className="absolute inset-0 flex items-center justify-center"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{
+                opacity: isHovered ? 1 : 0,
+                scale: isHovered ? 1 : 0.8,
+                rotateY: isHovered ? [0, 10, -10, 0] : 0,
+              }}
+              transition={{
+                duration: 0.5,
+                rotateY: {
+                  duration: 5,
+                  repeat: Number.POSITIVE_INFINITY,
+                  repeatType: "reverse",
+                },
               }}
             >
-              <div className="p-4 w-full">
-                <div className="flex flex-wrap gap-2 mb-2">
-                  <motion.span
-                    className="text-xs bg-white text-red-600 px-2 py-1 font-bold"
-                    whileHover={{ scale: 1.1, z: 50 }}
-                    style={{ transformStyle: "preserve-3d" }}
-                  >
-                    {product.category}
-                  </motion.span>
-                  {product.stock === "low-stock" && (
-                    <motion.span
-                      className="text-xs bg-yellow-500 text-white px-2 py-1 font-bold"
-                      whileHover={{ scale: 1.1, z: 50 }}
-                      style={{ transformStyle: "preserve-3d" }}
-                    >
-                      Stock limité
-                    </motion.span>
-                  )}
+              {/* Différents mockups 3D selon le type de produit */}
+              {getMockupType() === "tshirt" && (
+                <div className="relative w-full h-full">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <svg viewBox="0 0 300 300" className="w-4/5 h-4/5">
+                      <path
+                        d="M100,50 L50,100 L50,250 L250,250 L250,100 L200,50 L150,70 Z"
+                        fill="white"
+                        stroke="rgba(220, 38, 38, 0.8)"
+                        strokeWidth="2"
+                      />
+                      <path d="M100,50 L150,70 L200,50" fill="none" stroke="rgba(220, 38, 38, 0.8)" strokeWidth="2" />
+                      <circle cx="150" cy="150" r="40" fill="rgba(220, 38, 38, 0.8)" />
+                    </svg>
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs text-white font-bold">
+                      HAKKEN X LEGEND/S
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {getMockupType() === "hoodie" && (
+                <div className="relative w-full h-full">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <svg viewBox="0 0 300 300" className="w-4/5 h-4/5">
+                      <path
+                        d="M100,30 L50,80 L50,250 L250,250 L250,80 L200,30 L150,50 Z"
+                        fill="white"
+                        stroke="rgba(220, 38, 38, 0.8)"
+                        strokeWidth="2"
+                      />
+                      <path d="M100,30 L150,50 L200,30" fill="none" stroke="rgba(220, 38, 38, 0.8)" strokeWidth="2" />
+                      <path d="M100,80 L200,80 L200,120 L100,120 Z" fill="rgba(220, 38, 38, 0.8)" />
+                      <circle cx="150" cy="150" r="30" fill="rgba(220, 38, 38, 0.8)" />
+                    </svg>
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs text-white font-bold">
+                      INDUSTRIAL LEGENDS
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {getMockupType() === "cap" && (
+                <div className="relative w-full h-full">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <svg viewBox="0 0 300 300" className="w-4/5 h-4/5">
+                      <path
+                        d="M100,150 C100,100 200,100 200,150 L220,150 C220,90 80,90 80,150 Z"
+                        fill="white"
+                        stroke="rgba(220, 38, 38, 0.8)"
+                        strokeWidth="2"
+                      />
+                      <path
+                        d="M80,150 L100,150 L100,180 L200,180 L200,150 L220,150"
+                        fill="none"
+                        stroke="rgba(220, 38, 38, 0.8)"
+                        strokeWidth="2"
+                      />
+                      <path d="M100,150 L200,150" fill="none" stroke="rgba(220, 38, 38, 0.8)" strokeWidth="2" />
+                      <circle cx="150" cy="125" r="20" fill="rgba(220, 38, 38, 0.8)" />
+                    </svg>
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs text-white font-bold">
+                      LEGENDS RAW
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {getMockupType() === "vinyl" && (
+                <div className="relative w-full h-full">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <svg viewBox="0 0 300 300" className="w-4/5 h-4/5">
+                      <rect
+                        x="75"
+                        y="75"
+                        width="150"
+                        height="150"
+                        fill="black"
+                        stroke="rgba(220, 38, 38, 0.8)"
+                        strokeWidth="2"
+                      />
+                      <circle
+                        cx="150"
+                        cy="150"
+                        r="60"
+                        fill="rgba(220, 38, 38, 0.2)"
+                        stroke="rgba(220, 38, 38, 0.8)"
+                        strokeWidth="1"
+                      />
+                      <circle cx="150" cy="150" r="10" fill="white" stroke="rgba(220, 38, 38, 0.8)" strokeWidth="1" />
+                    </svg>
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs text-white font-bold">
+                      COLLECTOR
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {getMockupType() === "tote" && (
+                <div className="relative w-full h-full">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <svg viewBox="0 0 300 300" className="w-4/5 h-4/5">
+                      <path
+                        d="M100,80 L100,250 L200,250 L200,80"
+                        fill="white"
+                        stroke="rgba(220, 38, 38, 0.8)"
+                        strokeWidth="2"
+                      />
+                      <path
+                        d="M100,80 L80,120 L80,250 L220,250 L220,120 L200,80"
+                        fill="none"
+                        stroke="rgba(220, 38, 38, 0.8)"
+                        strokeWidth="2"
+                      />
+                      <path
+                        d="M100,80 L100,40 L200,40 L200,80"
+                        fill="none"
+                        stroke="rgba(220, 38, 38, 0.8)"
+                        strokeWidth="2"
+                      />
+                      <circle cx="150" cy="150" r="30" fill="rgba(220, 38, 38, 0.8)" />
+                    </svg>
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs text-white font-bold">
+                      LEGEND/S
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {getMockupType() === "jacket" && (
+                <div className="relative w-full h-full">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <svg viewBox="0 0 300 300" className="w-4/5 h-4/5">
+                      <path
+                        d="M80,50 L50,100 L50,250 L250,250 L250,100 L220,50 L150,70 Z"
+                        fill="white"
+                        stroke="rgba(220, 38, 38, 0.8)"
+                        strokeWidth="2"
+                      />
+                      <path d="M80,50 L150,70 L220,50" fill="none" stroke="rgba(220, 38, 38, 0.8)" strokeWidth="2" />
+                      <path
+                        d="M80,50 L80,20 L220,20 L220,50"
+                        fill="none"
+                        stroke="rgba(220, 38, 38, 0.8)"
+                        strokeWidth="2"
+                      />
+                      <circle cx="150" cy="150" r="30" fill="rgba(220, 38, 38, 0.8)" />
+                      <rect x="70" y="200" width="40" height="20" fill="rgba(220, 38, 38, 0.8)" />
+                      <rect x="190" y="200" width="40" height="20" fill="rgba(220, 38, 38, 0.8)" />
+                    </svg>
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-xs text-white font-bold">
+                      BOMBER LEGENDS
+                    </div>
+                  </div>
+                </div>
+              )}
             </motion.div>
 
-            {/* Effet de scan 3D */}
+            {/* Effet de scan */}
             <motion.div
               className="absolute inset-0 w-full h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent"
               initial={{ top: "-10%" }}
@@ -303,39 +428,27 @@ function ProductCard3D({ product, index }: { product: Product; index: number }) 
                 repeatType: "loop",
                 ease: "linear",
               }}
-              style={{
-                transformStyle: "preserve-3d",
-                transform: "translateZ(10px)",
-              }}
             />
           </div>
 
-          <div className="flex flex-col justify-between" style={{ transformStyle: "preserve-3d" }}>
+          <div className="flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <motion.h3
                   className="text-xl md:text-2xl font-bold tracking-tight text-black"
-                  style={{
-                    transformStyle: "preserve-3d",
-                    transform: isHovered ? "translateZ(20px)" : "translateZ(0px)",
-                    transition: "transform 0.3s ease",
-                  }}
+                  whileHover={{ color: "#dc2626" }}
                 >
                   {product.name}
                 </motion.h3>
                 {product.isLimited && (
                   <motion.div
                     animate={{
-                      rotateY: isHovered ? [0, 360, 0] : 0,
+                      rotate: isHovered ? [0, 360] : 0,
                     }}
                     transition={{
                       duration: 3,
                       repeat: isHovered ? Number.POSITIVE_INFINITY : 0,
                       repeatType: "loop",
-                    }}
-                    style={{
-                      transformStyle: "preserve-3d",
-                      transform: "translateZ(25px)",
                     }}
                   >
                     <Star className="w-5 h-5 text-red-600 fill-red-600" />
@@ -343,38 +456,17 @@ function ProductCard3D({ product, index }: { product: Product; index: number }) 
                 )}
               </div>
 
-              <motion.p
-                className="text-gray-700 mb-4"
-                style={{
-                  transformStyle: "preserve-3d",
-                  transform: isHovered ? "translateZ(15px)" : "translateZ(0px)",
-                  transition: "transform 0.3s ease",
-                }}
-              >
+              <motion.p className="text-gray-700 mb-4" whileHover={{ color: "#111827" }}>
                 {product.description}
               </motion.p>
 
-              <motion.div
-                className="flex items-center gap-4 mb-6"
-                style={{
-                  transformStyle: "preserve-3d",
-                  transform: isHovered ? "translateZ(25px)" : "translateZ(0px)",
-                  transition: "transform 0.3s ease",
-                }}
-              >
+              <motion.div className="flex items-center gap-4 mb-6" whileHover={{ scale: 1.02 }}>
                 <p className="text-xl font-bold text-red-600">{formatPrice(product.price)}</p>
                 <p className="text-sm text-gray-500">{getStockStatus(product.stock)}</p>
               </motion.div>
 
               {product.colors && (
-                <motion.div
-                  className="mb-4"
-                  style={{
-                    transformStyle: "preserve-3d",
-                    transform: isHovered ? "translateZ(30px)" : "translateZ(0px)",
-                    transition: "transform 0.3s ease",
-                  }}
-                >
+                <motion.div className="mb-4">
                   <p className="text-sm text-gray-700 mb-2 font-medium">Couleurs:</p>
                   <div className="flex gap-2">
                     {product.colors.map((color, i) => (
@@ -397,7 +489,6 @@ function ProductCard3D({ product, index }: { product: Product; index: number }) 
                               ? "0 0 15px rgba(220, 38, 38, 0.7)"
                               : "0 0 15px rgba(255, 255, 255, 0.7)",
                         }}
-                        style={{ transformStyle: "preserve-3d" }}
                       />
                     ))}
                   </div>
@@ -405,14 +496,7 @@ function ProductCard3D({ product, index }: { product: Product; index: number }) 
               )}
 
               {product.sizes && (
-                <motion.div
-                  className="mb-4"
-                  style={{
-                    transformStyle: "preserve-3d",
-                    transform: isHovered ? "translateZ(30px)" : "translateZ(0px)",
-                    transition: "transform 0.3s ease",
-                  }}
-                >
+                <motion.div className="mb-4">
                   <p className="text-sm text-gray-700 mb-2 font-medium">Tailles:</p>
                   <div className="flex gap-2">
                     {product.sizes.map((size, i) => (
@@ -424,7 +508,6 @@ function ProductCard3D({ product, index }: { product: Product; index: number }) 
                           boxShadow: "0 0 10px rgba(220, 38, 38, 0.3)",
                           backgroundColor: "rgba(220, 38, 38, 0.05)",
                         }}
-                        style={{ transformStyle: "preserve-3d" }}
                       >
                         {size}
                       </motion.div>
@@ -442,11 +525,6 @@ function ProductCard3D({ product, index }: { product: Product; index: number }) 
               }}
               whileTap={{ scale: product.stock !== "out-of-stock" ? 0.98 : 1 }}
               disabled={product.stock === "out-of-stock"}
-              style={{
-                transformStyle: "preserve-3d",
-                transform: isHovered ? "translateZ(40px)" : "translateZ(0px)",
-                transition: "transform 0.3s ease",
-              }}
             >
               {/* Effet de glitch sur le bouton */}
               {product.stock !== "out-of-stock" && (
@@ -471,7 +549,7 @@ function ProductCard3D({ product, index }: { product: Product; index: number }) 
             </motion.button>
           </div>
         </div>
-      </motion.div>
+      </div>
     </motion.div>
   )
 }
@@ -697,6 +775,7 @@ export default function ShopPage() {
             transformStyle: "preserve-3d",
             boxShadow: "0 20px 50px rgba(220, 38, 38, 0.3)",
           }}
+          data-cursor-color="light"
         >
           <motion.div
             className="absolute -top-20 -right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"
