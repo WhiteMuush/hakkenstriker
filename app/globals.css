@@ -3,25 +3,322 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
+  --card: 0 0% 3%;
+  --card-foreground: 0 0% 100%;
+  --popover: 0 0% 3%;
+  --popover-foreground: 0 0% 100%;
+  --primary: 346 84% 50%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 346 84% 50%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 70%;
+  --accent: 346 84% 50%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 100% 50%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 0 0% 20%;
+  --input: 0 0% 20%;
+  --ring: 346 84% 50%;
+  --radius: 0rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html {
+  scroll-behavior: smooth;
+  user-select: none;
+}
+
+html,
+html * {
+  cursor: none !important;
+}
+
+@media (max-width: 768px) {
+  html,
+  html * {
+    cursor: auto !important;
   }
+}
+
+/* Vidéos et iframes - assurer que le curseur est bien visible au-dessus */
+iframe,
+video,
+canvas {
+  pointer-events: auto !important;
+  z-index: 1 !important;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: black;
+  color: white;
+  font-family: "Inter", sans-serif;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }
+
+/* Custom animations */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Hide scrollbar but allow scrolling */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+html {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Custom link hover effect */
+a {
+  position: relative;
+}
+
+a::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 1px;
+  bottom: -2px;
+  left: 0;
+  background-color: #e11d48;
+  transform-origin: bottom right;
+  transition: transform 0.3s ease-out;
+}
+
+a:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+/* Glitch effect */
+.glitch-effect {
+  clip: rect(0, 900px, 0, 0);
+  animation: glitch-anim 2s infinite linear alternate-reverse;
+}
+
+.glitch-effect-2 {
+  clip: rect(0, 900px, 0, 0);
+  animation: glitch-anim-2 3s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim {
+  0% {
+    clip: rect(5px, 9999px, 5px, 0);
+    transform: translate(-2px, 0);
+  }
+  20% {
+    clip: rect(5px, 9999px, 5px, 0);
+    transform: translate(-2px, 0);
+  }
+  21% {
+    clip: rect(36px, 9999px, 36px, 0);
+    transform: translate(2px, 0);
+  }
+  40% {
+    clip: rect(36px, 9999px, 36px, 0);
+    transform: translate(2px, 0);
+  }
+  41% {
+    clip: rect(64px, 9999px, 64px, 0);
+    transform: translate(1px, 0);
+  }
+  60% {
+    clip: rect(64px, 9999px, 64px, 0);
+    transform: translate(1px, 0);
+  }
+  61% {
+    clip: rect(91px, 9999px, 91px, 0);
+    transform: translate(-1px, 0);
+  }
+  80% {
+    clip: rect(91px, 9999px, 91px, 0);
+    transform: translate(-1px, 0);
+  }
+  81% {
+    clip: rect(14px, 9999px, 14px, 0);
+    transform: translate(-2px, 0);
+  }
+  100% {
+    clip: rect(14px, 9999px, 14px, 0);
+    transform: translate(-2px, 0);
+  }
+}
+
+@keyframes glitch-anim-2 {
+  0% {
+    clip: rect(8px, 9999px, 8px, 0);
+    transform: translate(-3px, 0);
+  }
+  15% {
+    clip: rect(8px, 9999px, 8px, 0);
+    transform: translate(-3px, 0);
+  }
+  16% {
+    clip: rect(42px, 9999px, 42px, 0);
+    transform: translate(3px, 0);
+  }
+  35% {
+    clip: rect(42px, 9999px, 42px, 0);
+    transform: translate(3px, 0);
+  }
+  36% {
+    clip: rect(57px, 9999px, 57px, 0);
+    transform: translate(2px, 0);
+  }
+  55% {
+    clip: rect(57px, 9999px, 57px, 0);
+    transform: translate(2px, 0);
+  }
+  56% {
+    clip: rect(83px, 9999px, 83px, 0);
+    transform: translate(-2px, 0);
+  }
+  75% {
+    clip: rect(83px, 9999px, 83px, 0);
+    transform: translate(-2px, 0);
+  }
+  76% {
+    clip: rect(20px, 9999px, 20px, 0);
+    transform: translate(-3px, 0);
+  }
+  100% {
+    clip: rect(20px, 9999px, 20px, 0);
+    transform: translate(-3px, 0);
+  }
+}
+
+/* Glitch animation for text */
+.glitch-anim-1 {
+  animation: glitch-skew 1s infinite linear alternate-reverse;
+  transform: skew(5deg);
+}
+
+.glitch-anim-2 {
+  animation: glitch-skew 2s infinite linear alternate-reverse;
+  transform: skew(-5deg);
+}
+
+@keyframes glitch-skew {
+  0% {
+    transform: skew(0deg);
+  }
+  10% {
+    transform: skew(1deg);
+  }
+  20% {
+    transform: skew(0deg);
+  }
+  30% {
+    transform: skew(-1deg);
+  }
+  40% {
+    transform: skew(0deg);
+  }
+  50% {
+    transform: skew(2deg);
+  }
+  60% {
+    transform: skew(0deg);
+  }
+  70% {
+    transform: skew(-2deg);
+  }
+  80% {
+    transform: skew(0deg);
+  }
+  90% {
+    transform: skew(1deg);
+  }
+  100% {
+    transform: skew(0deg);
+  }
+}
+
+/* Noise background */
+.bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  width: 100%;
+  height: 100%;
+}
+
+/* Glow effects */
+.shadow-glow-sm {
+  box-shadow: 0 0 5px rgba(225, 29, 72, 0.7);
+}
+
+.shadow-glow-md {
+  box-shadow: 0 0 10px rgba(225, 29, 72, 0.7);
+}
+
+.shadow-glow-lg {
+  box-shadow: 0 0 15px rgba(225, 29, 72, 0.7);
+}
+
+.shadow-glow-xl {
+  box-shadow: 0 0 25px rgba(225, 29, 72, 0.7);
+}
+
+.text-glow-sm {
+  text-shadow: 0 0 5px rgba(225, 29, 72, 0.7);
+}
+
+.text-glow-md {
+  text-shadow: 0 0 10px rgba(225, 29, 72, 0.7);
+}
+
+.border-glow {
+  box-shadow: 0 0 15px rgba(225, 29, 72, 0.7);
+  border-color: rgba(225, 29, 72, 0.7);
+}
+
+.neon-red {
+  color: #ff0057;
+  text-shadow: 0 0 5px rgba(255, 0, 87, 0.8), 0 0 10px rgba(255, 0, 87, 0.5), 0 0 15px rgba(255, 0, 87, 0.3);
+}
+
+.neon-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.neon-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(225, 29, 72, 0.4), transparent);
+  transition: 0.5s;
+}
+
+.neon-button:hover::before {
+  left: 100%;
+}
+

@@ -2,13 +2,10 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
-import { motion, useScroll, useTransform } from "framer-motion"
+import { motion, useScroll, useTransform, useSpring, useMotionValue, useAnimationFrame } from "framer-motion"
 import { ExternalLink, Menu, X, Zap, Skull, Bomb, Eye, Headphones, Disc, Radio, Volume2 } from "lucide-react"
-
-// Import CustomCursor component
-import CustomCursor from "@/components/custom-cursor"
 
 // Types
 interface MusicRelease {
@@ -26,53 +23,53 @@ interface YouTubeVideo {
 }
 
 // Mouse follower component
-// function MouseFollower() {
-//   const cursorRef = useRef<HTMLDivElement>(null)
-//   const cursorDotRef = useRef<HTMLDivElement>(null)
-//   const mouseX = useMotionValue(0)
-//   const mouseY = useMotionValue(0)
+function MouseFollower() {
+  const cursorRef = useRef<HTMLDivElement>(null)
+  const cursorDotRef = useRef<HTMLDivElement>(null)
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
 
-//   const smoothX = useSpring(mouseX, { damping: 50, stiffness: 1000 })
-//   const smoothY = useSpring(mouseY, { damping: 50, stiffness: 1000 })
+  const smoothX = useSpring(mouseX, { damping: 50, stiffness: 1000 })
+  const smoothY = useSpring(mouseY, { damping: 50, stiffness: 1000 })
 
-//   useEffect(() => {
-//     const handleMouseMove = (e: MouseEvent) => {
-//       mouseX.set(e.clientX)
-//       mouseY.set(e.clientY)
-//     }
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX.set(e.clientX)
+      mouseY.set(e.clientY)
+    }
 
-//     window.addEventListener("mousemove", handleMouseMove)
-//     return () => window.removeEventListener("mousemove", handleMouseMove)
-//   }, [mouseX, mouseY])
+    window.addEventListener("mousemove", handleMouseMove)
+    return () => window.removeEventListener("mousemove", handleMouseMove)
+  }, [mouseX, mouseY])
 
-//   useAnimationFrame(() => {
-//     if (cursorRef.current && cursorDotRef.current) {
-//       const x = smoothX.get()
-//       const y = smoothY.get()
-//       cursorRef.current.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px)`
-//       cursorDotRef.current.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px)`
-//     }
-//   })
+  useAnimationFrame(() => {
+    if (cursorRef.current && cursorDotRef.current) {
+      const x = smoothX.get()
+      const y = smoothY.get()
+      cursorRef.current.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px)`
+      cursorDotRef.current.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px)`
+    }
+  })
 
-//   return (
-//     <>
-//       <motion.div
-//         ref={cursorRef}
-//         className="fixed w-8 h-8 rounded-full border border-red-500 pointer-events-none z-[60] hidden md:block"
-//         initial={{ opacity: 0 }}
-//         animate={{ opacity: 1 }}
-//         style={{ left: 0, top: 0 }}
-//       />
-//       <motion.div
-//         ref={cursorDotRef}
-//         className="fixed w-2 h-2 rounded-full bg-red-500 pointer-events-none z-[60] hidden md:block"
-//         initial={{ opacity: 0 }}
-//         animate={{ opacity: 1 }}
-//         style={{ left: 0, top: 0 }}
-//       />
-//     </>
-//   )
-// }
+  return (
+    <>
+      <motion.div
+        ref={cursorRef}
+        className="fixed w-8 h-8 rounded-full border border-red-500 pointer-events-none z-[60] hidden md:block"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        style={{ left: 0, top: 0 }}
+      />
+      <motion.div
+        ref={cursorDotRef}
+        className="fixed w-2 h-2 rounded-full bg-red-500 pointer-events-none z-[60] hidden md:block"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        style={{ left: 0, top: 0 }}
+      />
+    </>
+  )
+}
 
 // Noise overlay
 function NoiseOverlay() {
@@ -279,16 +276,9 @@ export default function MusicProfile() {
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-red-500 selection:text-black">
-      {/* <MouseFollower /> */}
-      <CustomCursor />
+      <MouseFollower />
       <NoiseOverlay />
       <BackgroundElements />
-
-      {/* Effets de glow ambiants */}
-      <div className="fixed inset-0 pointer-events-none z-5">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-500/5 rounded-full filter blur-[100px]"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-red-500/5 rounded-full filter blur-[100px]"></div>
-      </div>
 
       {/* Progress bar */}
       <motion.div
@@ -315,7 +305,7 @@ export default function MusicProfile() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
-              className="text-red-500 font-medium tracking-wider flex items-center gap-0 py-2 px-4 hover:bg-red-500/10 rounded-sm"
+              className="text-red-500 font-medium tracking-wider flex items-center justify-center gap-0 py-2 px-4 hover:bg-red-500/10 rounded-sm"
             >
               • UNDERGROUND
             </motion.button>
@@ -337,18 +327,13 @@ export default function MusicProfile() {
                   href="#connect"
                   className="px-4 py-2 hover:bg-red-500/10 hover:text-red-500 transition-colors text-sm"
                 >
+                  CONNECT
+                </Link>
+                <Link
+                  href="/samples"
+                  className="px-4 py-2 hover:bg-red-500/10 hover:text-red-500 transition-colors text-sm"
+                >
                   SAMPLES
-                </Link>
-                <Link
-                  href="/coming-soon"
-                  className="px-4 py-2 hover:bg-red-500/10 hover:text-red-500 transition-colors text-sm"
-                >
-                  SHOP
-                </Link>
-                <Link
-                  href="/coming-soon"
-                  className="px-4 py-2 hover:bg-red-500/10 hover:text-red-500 transition-colors text-sm"
-                >
                 </Link>
               </div>
             </div>
@@ -358,18 +343,10 @@ export default function MusicProfile() {
         <div className="hidden md:flex items-center gap-8">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}>
             <Link
-              href="/coming-soon"
+              href="/samples"
               className="tracking-wider hover:text-red-500 transition-colors py-2 px-4 hover:bg-red-500/10 rounded-sm"
             >
               SAMPLES •
-            </Link>
-          </motion.div>
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}>
-            <Link
-              href="/coming-soon"
-              className="tracking-wider hover:text-red-500 transition-colors py-2 px-4 hover:bg-red-500/10 rounded-sm"
-            >
-              SHOP •
             </Link>
           </motion.div>
         </div>
@@ -421,13 +398,6 @@ export default function MusicProfile() {
               onClick={() => setIsMenuOpen(false)}
             >
               SAMPLES
-            </Link>
-            <Link
-              href="/shop"
-              className="text-2xl font-bold tracking-wider hover:text-red-500 transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              SHOP
             </Link>
             <div className="h-px w-full bg-white/10 my-4"></div>
             <Link
@@ -494,7 +464,7 @@ export default function MusicProfile() {
           <div className="flex flex-col items-center">
             <div className="overflow-hidden">
               <motion.h1
-                className="text-[10vw] md:text-[15vw] font-bold text-red-500 leading-none tracking-tighter flex flex-wrap justify-center text-glow-sm"
+                className="text-[10vw] md:text-[15vw] font-bold text-red-500 leading-none tracking-tighter flex flex-wrap justify-center"
                 initial={{ y: 100 }}
                 animate={{ y: 0 }}
                 transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
@@ -541,7 +511,7 @@ export default function MusicProfile() {
             </div>
 
             <motion.div
-              className="w-full md:w-1/2 h-1 bg-red-500 my-4 shadow-glow-md"
+              className="w-full md:w-1/2 h-1 bg-red-500 my-4"
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ duration: 0.8, delay: 0.5 }}
@@ -553,20 +523,20 @@ export default function MusicProfile() {
               transition={{ delay: 1, duration: 0.5 }}
               className="flex gap-6 mt-8"
             >
-              <motion.div whileHover={{ scale: 1.2, rotate: 10 }} className="animate-pulse shadow-glow-sm">
+              <motion.div whileHover={{ scale: 1.2, rotate: 10 }} className="animate-pulse">
                 <Zap className="w-6 h-6 text-red-500" />
               </motion.div>
-              <motion.div whileHover={{ scale: 1.2, rotate: -10 }} className="shadow-glow-sm">
+              <motion.div whileHover={{ scale: 1.2, rotate: -10 }}>
                 <Skull className="w-6 h-6 text-red-500" />
               </motion.div>
               <motion.div
                 whileHover={{ scale: 1.2, rotate: 10 }}
-                className="animate-pulse shadow-glow-sm"
+                className="animate-pulse"
                 style={{ animationDelay: "0.5s" }}
               >
                 <Bomb className="w-6 h-6 text-red-500" />
               </motion.div>
-              <motion.div whileHover={{ scale: 1.2, rotate: -10 }} className="shadow-glow-sm">
+              <motion.div whileHover={{ scale: 1.2, rotate: -10 }}>
                 <Eye className="w-6 h-6 text-red-500" />
               </motion.div>
             </motion.div>
@@ -665,7 +635,7 @@ export default function MusicProfile() {
               href="https://open.spotify.com/intl-fr/artist/3MfxSldgvVispErMvgpqUo?si=i3XO6bHhRW2eZSXuRsLcew"
               target="_blank"
               rel="noopener noreferrer"
-              className="border border-red-500 text-red-500 px-8 py-3 hover:bg-red-500 hover:text-black transition-colors text-lg font-medium neon-button shadow-glow-sm hover:shadow-glow-md"
+              className="border border-red-500 text-red-500 px-8 py-3 hover:bg-red-500 hover:text-black transition-colors text-lg font-medium"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -767,7 +737,7 @@ export default function MusicProfile() {
                       allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
                       title={youtubeVideo.videoTitle}
-                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105 z-30 relative"
+                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                     />
                   )}
                 </div>
